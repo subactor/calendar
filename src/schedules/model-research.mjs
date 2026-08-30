@@ -20,9 +20,27 @@ export const weeklyModelResearch = Object.freeze({
     automaticProductionAssignment: false,
   }),
   providers: Object.freeze([
-    Object.freeze({ id: "cursor", discovery: "runtime-catalog", benchmarkTransport: "subllm" }),
-    Object.freeze({ id: "openrouter", discovery: "provider-api", benchmarkTransport: "subllm" }),
-    Object.freeze({ id: "zai", discovery: "provider-api", benchmarkTransport: "subllm" }),
+    Object.freeze({
+      id: "cursor",
+      discovery: "account-models-api",
+      discoveryCredential: "CURSOR_API_KEY",
+      benchmarkTransport: null,
+      benchmarkStatus: "NOT_EVALUATED_NO_BENCHMARK_ADAPTER",
+    }),
+    Object.freeze({
+      id: "openrouter",
+      discovery: "provider-models-api",
+      discoveryCredential: null,
+      benchmarkTransport: "openrouter-chat-completions",
+      benchmarkStatus: "READY_CURRENT_TRANSPORT",
+    }),
+    Object.freeze({
+      id: "zai",
+      discovery: "subllm-configured-catalog",
+      discoveryCredential: null,
+      benchmarkTransport: null,
+      benchmarkStatus: "NOT_EVALUATED_NO_BENCHMARK_ADAPTER",
+    }),
   ]),
   phases: Object.freeze([
     "discover-provider-models",

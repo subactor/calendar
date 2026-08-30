@@ -1,0 +1,61 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-006",
+  "summary": "Align provider capability contract",
+  "workstream": "application",
+  "classification": {
+    "kind": "BUG",
+    "priority": "P1",
+    "origin": "requested"
+  },
+  "placement": {
+    "home": "subactor",
+    "runtimeOwner": "subactor",
+    "shape": "runtime_service",
+    "adopt": ["wellmanifest/new-project"]
+  },
+  "allowedPaths": [
+    "src/schedules/model-research.mjs",
+    "test/calendar.test.mjs",
+    "project/ticket-006/**",
+    "TODO.md",
+    "project/TICKETS.md"
+  ],
+  "forbiddenPaths": ["project/ticket-*/user-*.md"],
+  "stacks": ["node"],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "041c9a17e45a29ba48a0d45b0e112068fa640575",
+    "targetBranch": "main",
+    "outcome": "Provider capability metadata accurately separates discovery from benchmark execution.",
+    "nonGoals": ["Implement provider adapters", "Store provider credentials"],
+    "complexity": "S",
+    "estimatedMinutes": 10,
+    "budgets": {
+      "maxImplementationFiles": 4,
+      "maxAffectedComponents": 1,
+      "maxPublicInterfaceChanges": 1,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Calendar declares capability status; the benchmark target provides execution evidence.",
+      "components": [{"name": "weekly-model-research", "paths": ["src/schedules/model-research.mjs", "test/calendar.test.mjs"]}],
+      "responsibilityChanges": false,
+      "interfaceChanges": ["Provider entries gain explicit discovery and benchmark status"],
+      "dataChanges": [],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Revert the provider metadata correction."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-03",
+        "commands": ["node --test", "./project/governance-check.sh"],
+        "evidence": "Runtime and governance checks pass"
+      }
+    ]
+  }
+}
