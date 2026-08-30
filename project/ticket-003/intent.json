@@ -1,0 +1,44 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-003",
+  "summary": "Publish the Calendar contract and staged migration procedure",
+  "workstream": "integration",
+  "classification": {"kind": "FEATURE", "priority": "P1", "origin": "requested"},
+  "placement": {"home": "subactor", "runtimeOwner": "subactor", "shape": "runtime_service", "adopt": ["wellmanifest/new-project"]},
+  "allowedPaths": ["docs/**", "models/**", "project/ticket-003/**", "TODO.md", "project/TICKETS.md"],
+  "forbiddenPaths": ["project/ticket-*/user-*.md"],
+  "stacks": ["node", "json-schema"],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "8e2d94718b5cf8c159d020ef88fa6b1e08e8aa42",
+    "targetBranch": "main",
+    "outcome": "A versioned schedule schema and operational migration contract define Calendar as the portable time owner without moving workload credentials or handlers.",
+    "nonGoals": ["Move workload implementations", "Store provider credentials", "Enable automatic model promotion"],
+    "complexity": "M",
+    "estimatedMinutes": 30,
+    "budgets": {"maxImplementationFiles": 9, "maxAffectedComponents": 3, "maxPublicInterfaceChanges": 2, "maxRuntimeDependencies": 0},
+    "architecture": {
+      "status": "accepted",
+      "decision": "Calendar becomes the single source of portable time contracts and dispatch identity; repositories keep execution, credentials, ledgers and domain reports.",
+      "components": [
+        {"name": "schedule-contract", "paths": ["models/**"]},
+        {"name": "architecture", "paths": ["docs/ARCHITECTURE.md"]},
+        {"name": "migration-runbook", "paths": ["docs/MIGRATION.md"]}
+      ],
+      "responsibilityChanges": true,
+      "interfaceChanges": ["Publish subactor.calendar/schedule/v1", "Define calendar.weekly-model-research.v1 dispatch payload"],
+      "dataChanges": ["Schedule declarations gain clock ownership, cost policy and deduplication identity"],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Disable Calendar dispatch and restore exactly one prior clock from its recorded migration receipt."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {"criterion": "AC-01", "commands": ["python3 -m json.tool models/schedule.schema.json"], "evidence": "Valid JSON Schema"},
+      {"criterion": "AC-02", "commands": ["./project/governance-check.sh"], "evidence": "Integration ownership gate"},
+      {"criterion": "AC-03", "commands": ["./project/governance-check.sh"], "evidence": "Documented two-phase migration and rollback"},
+      {"criterion": "AC-04", "commands": ["./project/governance-check.sh"], "evidence": "Weekly research contract example"}
+    ]
+  }
+}

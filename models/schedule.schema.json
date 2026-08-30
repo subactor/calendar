@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/subactor/calendar/models/schedule.schema.json",
+  "title": "Subactor Calendar schedule",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["id", "clockOwner", "trigger", "target"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "clockOwner": {"type": "string", "minLength": 1},
+    "description": {"type": "string", "minLength": 1},
+    "trigger": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "expression", "timezone"],
+          "properties": {
+            "kind": {"const": "cron"},
+            "expression": {"type": "string", "minLength": 9},
+            "timezone": {"type": "string", "minLength": 1}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "everyMs", "anchor"],
+          "properties": {
+            "kind": {"const": "interval"},
+            "everyMs": {"type": "integer", "minimum": 60000},
+            "anchor": {"type": "string", "format": "date-time"}
+          }
+        }
+      ]
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["repository", "handler"],
+      "properties": {
+        "repository": {"type": "string", "pattern": "^[^/]+/[^/]+$"},
+        "handler": {"type": "string", "minLength": 1},
+        "eventType": {"type": "string", "minLength": 1}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "graceMs": {"type": "integer", "minimum": 0},
+        "maxRunCostUsd": {"type": "number", "minimum": 0},
+        "deduplication": {"const": "occurrence-key"},
+        "automaticProductionAssignment": {"const": false}
+      }
+    }
+  }
+}
