@@ -1,0 +1,38 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-002",
+  "summary": "Add calendar continuous integration",
+  "workstream": "infrastructure",
+  "classification": {"kind": "SERVICE", "priority": "P1", "origin": "requested"},
+  "allowedPaths": [".github/**", "project/ticket-002/**", "TODO.md", "project/TICKETS.md"],
+  "forbiddenPaths": ["project/ticket-*/user-*.md"],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "8e2d94718b5cf8c159d020ef88fa6b1e08e8aa42",
+    "targetBranch": "main",
+    "outcome": "Pull requests and main are checked on Linux and Windows with names matching the required-check contract.",
+    "nonGoals": ["Dispatch scheduled workloads", "Publish packages"],
+    "complexity": "S",
+    "estimatedMinutes": 15,
+    "budgets": {"maxImplementationFiles": 5, "maxAffectedComponents": 2, "maxPublicInterfaceChanges": 1, "maxRuntimeDependencies": 1},
+    "architecture": {
+      "status": "accepted",
+      "decision": "Use one pinned GitHub Actions workflow as the repository validation boundary.",
+      "components": [{"name": "continuous-integration", "paths": [".github/**"]}],
+      "responsibilityChanges": false,
+      "interfaceChanges": [],
+      "dataChanges": [],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Remove the workflow before enabling branch protection."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {"criterion": "AC-01", "commands": ["node --test", "./project/governance-check.sh"], "evidence": "Linux test job"},
+      {"criterion": "AC-02", "commands": ["project\\governance-check.bat"], "evidence": "Windows governance job"},
+      {"criterion": "AC-03", "commands": ["./project/governance-check.sh"], "evidence": "Required-check synchronization in the governance gate"}
+    ]
+  }
+}

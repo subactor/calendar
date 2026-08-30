@@ -1,0 +1,38 @@
+name: calendar-ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Test calendar runtime
+        run: if [ -d test ]; then node --test; else echo "Runtime tests arrive in the application slice"; fi
+      - name: Activate managed hooks
+        run: git config core.hooksPath .githooks
+      - name: Validate governance
+        run: ./project/governance-check.sh
+
+  windows-governance:
+    runs-on: windows-latest
+    steps:
+      - name: Preserve managed file bytes
+        shell: cmd
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Activate managed hooks
+        shell: cmd
+        run: git config core.hooksPath .githooks
+      - name: Validate governance entrypoints
+        shell: cmd
+        run: project\governance-check.bat
