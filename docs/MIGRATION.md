@@ -39,7 +39,9 @@ The target event is `calendar.weekly-model-research.v1` with bounded payload:
 }
 ```
 
-`llm-code-benchmark` owns the dispatch credential, model credentials, ledger,
-fixtures and reports. Calendar stores none of them. The first paid occurrence
-must not be enabled until both repositories have published their halves and an
-unpaid contract check has passed.
+Calendar owns only the narrowly scoped credential that authorizes repository
+dispatch to `llm-code-benchmark`; it stores no provider or model credentials.
+`llm-code-benchmark` owns provider/model credentials, the budget ledger,
+fixtures and reports. The first paid occurrence must not be enabled until both
+repositories have published their halves and an unpaid contract check has
+passed.

@@ -1,0 +1,60 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-005",
+  "summary": "Clarify dispatch credential ownership",
+  "workstream": "integration",
+  "classification": {
+    "kind": "BUG",
+    "priority": "P1",
+    "origin": "requested"
+  },
+  "placement": {
+    "home": "subactor",
+    "runtimeOwner": "subactor",
+    "shape": "runtime_service",
+    "adopt": ["wellmanifest/new-project"]
+  },
+  "allowedPaths": [
+    "docs/MIGRATION.md",
+    "project/ticket-005/**",
+    "TODO.md",
+    "project/TICKETS.md"
+  ],
+  "forbiddenPaths": ["project/ticket-*/user-*.md"],
+  "stacks": ["node"],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "eab64e16bb69aa3bceb290bfbd77b91659654e55",
+    "targetBranch": "main",
+    "outcome": "Migration documentation accurately separates dispatch authorization from benchmark/provider credentials.",
+    "nonGoals": ["Change runtime behavior", "Store provider secrets in Calendar"],
+    "complexity": "S",
+    "estimatedMinutes": 10,
+    "budgets": {
+      "maxImplementationFiles": 3,
+      "maxAffectedComponents": 1,
+      "maxPublicInterfaceChanges": 0,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Calendar owns only the scoped dispatch authorization; the target owns workload credentials and state.",
+      "components": [{"name": "migration-runbook", "paths": ["docs/MIGRATION.md"]}],
+      "responsibilityChanges": false,
+      "interfaceChanges": [],
+      "dataChanges": [],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Revert the documentation correction."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-03",
+        "commands": ["./project/governance-check.sh", "node --test"],
+        "evidence": "Governance and runtime checks pass"
+      }
+    ]
+  }
+}
