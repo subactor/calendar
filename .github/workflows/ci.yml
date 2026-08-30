@@ -1,0 +1,33 @@
+name: calendar-ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@6044e13b5c57c52d60b04f2a8a6c4c5b1dcdbbe5 # v6.1.0
+        with:
+          node-version: '24'
+      - name: Test calendar runtime
+        run: node --test
+      - name: Validate governance
+        run: ./project/governance-check.sh
+
+  windows-governance:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Validate governance entrypoints
+        shell: cmd
+        run: project\governance-check.bat
