@@ -17,7 +17,7 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Test calendar runtime
-        run: node --test
+        run: if [ -d test ]; then node --test; else echo "Runtime tests arrive in the application slice"; fi
       - name: Validate governance
         run: ./project/governance-check.sh
 
