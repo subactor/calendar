@@ -1,0 +1,39 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-004",
+  "summary": "Dispatch weekly model research from the sole Calendar clock",
+  "workstream": "infrastructure",
+  "classification": {"kind": "FEATURE", "priority": "P1", "origin": "requested"},
+  "allowedPaths": [".github/**", "project/ticket-004/**", "TODO.md", "project/TICKETS.md"],
+  "forbiddenPaths": ["project/ticket-*/user-*.md"],
+  "stacks": ["github-actions", "node"],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "9f14f59faab3bfc0821d2a2e12b41b45f47d7c39",
+    "targetBranch": "main",
+    "outcome": "One Calendar-owned weekly GitHub clock dispatches a deduplicated, five-dollar model-research occurrence to llm-code-benchmark.",
+    "nonGoals": ["Store benchmark model credentials", "Run benchmark fixtures inside Calendar", "Automatically change SubLLM routes"],
+    "complexity": "S",
+    "estimatedMinutes": 25,
+    "budgets": {"maxImplementationFiles": 5, "maxAffectedComponents": 2, "maxPublicInterfaceChanges": 1, "maxRuntimeDependencies": 0},
+    "architecture": {
+      "status": "accepted",
+      "decision": "GitHub Actions supplies Calendar's hosted clock; Calendar computes the occurrence identity and sends a bounded repository_dispatch while the target owns paid execution.",
+      "components": [{"name": "weekly-dispatch", "paths": [".github/workflows/weekly-model-research.yml"]}],
+      "responsibilityChanges": false,
+      "interfaceChanges": ["Emit calendar.weekly-model-research.v1 repository dispatch"],
+      "dataChanges": [],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Disable this workflow before restoring any former target-repository cron."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {"criterion": "AC-01", "commands": ["./project/governance-check.sh"], "evidence": "Workflow cron contract"},
+      {"criterion": "AC-02", "commands": ["./project/governance-check.sh"], "evidence": "Occurrence and provider payload construction"},
+      {"criterion": "AC-03", "commands": ["./project/governance-check.sh"], "evidence": "Literal five-dollar payload"},
+      {"criterion": "AC-04", "commands": ["./project/governance-check.sh"], "evidence": "workflow_dispatch dry-run branch"}
+    ]
+  }
+}

@@ -1,0 +1,72 @@
+name: weekly-model-research
+
+on:
+  schedule:
+    - cron: "21 3 * * 1"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Validate and print the bounded dispatch without sending it
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: calendar-weekly-model-research
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    name: dispatch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Calculate the due occurrence
+        id: occurrence
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync } from "node:fs";
+          import { dueOccurrences } from "./src/calendar.mjs";
+          import { weeklyModelResearch } from "./src/schedules/model-research.mjs";
+
+          const observedAt = new Date();
+          const manual = process.env.EVENT_NAME === "workflow_dispatch";
+          const schedule = manual
+            ? { ...weeklyModelResearch, policy: { ...weeklyModelResearch.policy, graceMs: 8 * 24 * 60 * 60_000 } }
+            : weeklyModelResearch;
+          const due = dueOccurrences(schedule, {
+            after: new Date(observedAt.valueOf() - 8 * 24 * 60 * 60_000),
+            observedAt,
+          });
+          const latest = due.at(-1);
+          if (!latest) throw new Error("No weekly occurrence is due inside the declared grace window");
+          appendFileSync(process.env.GITHUB_OUTPUT, `key=${latest.occurrenceKey}\nslot=${latest.scheduledFor}\n`);
+          NODE
+      - name: Build bounded dispatch payload
+        env:
+          OCCURRENCE_KEY: ${{ steps.occurrence.outputs.key }}
+          SCHEDULED_FOR: ${{ steps.occurrence.outputs.slot }}
+        run: |
+          jq -n \
+            --arg key "$OCCURRENCE_KEY" \
+            --arg slot "$SCHEDULED_FOR" \
+            '{event_type:"calendar.weekly-model-research.v1",client_payload:{clock_owner:"subactor/calendar",occurrence_key:$key,scheduled_for:$slot,providers:"cursor,openrouter,zai",budget_usd:"5",max_models:"10",repetitions:"1"}}' \
+            > "$RUNNER_TEMP/model-research-dispatch.json"
+          jq . "$RUNNER_TEMP/model-research-dispatch.json" >> "$GITHUB_STEP_SUMMARY"
+      - name: Require repository-scoped dispatcher credential
+        if: github.event_name == 'schedule' || inputs.dry_run == false
+        env:
+          CALENDAR_DISPATCH_TOKEN: ${{ secrets.CALENDAR_DISPATCH_TOKEN }}
+        run: test -n "$CALENDAR_DISPATCH_TOKEN"
+      - name: Dispatch benchmark execution
+        if: github.event_name == 'schedule' || inputs.dry_run == false
+        env:
+          GH_TOKEN: ${{ secrets.CALENDAR_DISPATCH_TOKEN }}
+        run: gh api --method POST repos/subactor/llm-code-benchmark/dispatches --input "$RUNNER_TEMP/model-research-dispatch.json"
+      - name: Confirm dry run
+        if: github.event_name == 'workflow_dispatch' && inputs.dry_run == true
+        run: echo "Dry run only; no repository dispatch was sent." >> "$GITHUB_STEP_SUMMARY"
