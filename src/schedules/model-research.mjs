@@ -1,0 +1,45 @@
+export const weeklyModelResearch = Object.freeze({
+  id: "llm-model-research-weekly",
+  clockOwner: "subactor/calendar",
+  description: "Discover, benchmark and rank newly available models for Subactor task routes.",
+  trigger: Object.freeze({
+    kind: "cron",
+    expression: "21 3 * * 1",
+    timezone: "UTC",
+  }),
+  target: Object.freeze({
+    repository: "subactor/llm-code-benchmark",
+    handler: "weekly-model-research",
+    eventType: "calendar.weekly-model-research.v1",
+  }),
+  policy: Object.freeze({
+    graceMs: 6 * 60 * 60_000,
+    maxRunCostUsd: 5,
+    budgetScope: "whole-occurrence",
+    deduplication: "occurrence-key",
+    automaticProductionAssignment: false,
+  }),
+  providers: Object.freeze([
+    Object.freeze({ id: "cursor", discovery: "runtime-catalog", benchmarkTransport: "subllm" }),
+    Object.freeze({ id: "openrouter", discovery: "provider-api", benchmarkTransport: "subllm" }),
+    Object.freeze({ id: "zai", discovery: "provider-api", benchmarkTransport: "subllm" }),
+  ]),
+  phases: Object.freeze([
+    "discover-provider-models",
+    "diff-against-last-catalog",
+    "select-new-and-promising-candidates",
+    "run-role-and-structured-io-benchmarks",
+    "run-multi-request-session-benchmarks",
+    "generate-md-html-pdf-report",
+    "propose-subllm-route-assignments",
+  ]),
+  taskFamilies: Object.freeze([
+    "coding-agent",
+    "repair-agent",
+    "validator-agent",
+    "research-and-planning",
+    "json-deep-structure",
+    "jsonl-streaming",
+    "multi-problem-session",
+  ]),
+});

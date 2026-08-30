@@ -1,3 +1,3 @@
 # TODO
 
-No implementation ticket has been allocated yet.
+- [ ] ticket-001: implement the provider-neutral calendar runtime and tests.
