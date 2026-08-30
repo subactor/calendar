@@ -74,6 +74,14 @@ test("creates stable occurrence keys without target-specific state", () => {
 test("weekly model research covers every configured SubLLM provider under one budget", () => {
   validateSchedule(weeklyModelResearch);
   assert.deepEqual(weeklyModelResearch.providers.map(({ id }) => id), ["cursor", "openrouter", "zai"]);
+  const providers = Object.fromEntries(weeklyModelResearch.providers.map((provider) => [provider.id, provider]));
+  assert.equal(providers.openrouter.benchmarkStatus, "READY_CURRENT_TRANSPORT");
+  assert.equal(providers.openrouter.benchmarkTransport, "openrouter-chat-completions");
+  assert.equal(providers.cursor.benchmarkStatus, "NOT_EVALUATED_NO_BENCHMARK_ADAPTER");
+  assert.equal(providers.cursor.benchmarkTransport, null);
+  assert.equal(providers.zai.discovery, "subllm-configured-catalog");
+  assert.equal(providers.zai.benchmarkStatus, "NOT_EVALUATED_NO_BENCHMARK_ADAPTER");
+  assert.equal(providers.zai.benchmarkTransport, null);
   assert.equal(weeklyModelResearch.policy.maxRunCostUsd, 5);
   assert.equal(weeklyModelResearch.policy.budgetScope, "whole-occurrence");
   assert.equal(weeklyModelResearch.policy.automaticProductionAssignment, false);
