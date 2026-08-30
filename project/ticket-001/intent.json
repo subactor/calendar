@@ -1,0 +1,67 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-001",
+  "summary": "Implement the provider-neutral calendar runtime",
+  "workstream": "application",
+  "classification": {
+    "kind": "FEATURE",
+    "priority": "P1",
+    "origin": "requested"
+  },
+  "placement": {
+    "home": "subactor",
+    "runtimeOwner": "subactor",
+    "shape": "runtime_service",
+    "adopt": ["wellmanifest/new-project"]
+  },
+  "allowedPaths": [
+    "src/**",
+    "test/**",
+    "project/ticket-001/**",
+    "TODO.md",
+    "project/TICKETS.md"
+  ],
+  "forbiddenPaths": ["project/ticket-*/user-*.md"],
+  "stacks": ["node"],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "8e2d94718b5cf8c159d020ef88fa6b1e08e8aa42",
+    "targetBranch": "main",
+    "outcome": "A deterministic, dependency-free calendar runtime validates schedules and emits due occurrences without executing target workloads.",
+    "nonGoals": [
+      "Move existing workload implementations into the calendar repository",
+      "Store provider or benchmark credentials",
+      "Enable production model assignments automatically"
+    ],
+    "complexity": "S",
+    "estimatedMinutes": 30,
+    "budgets": {
+      "maxImplementationFiles": 5,
+      "maxAffectedComponents": 2,
+      "maxPublicInterfaceChanges": 1,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Calendar owns portable time contracts and due-slot calculation; one declared external clock dispatches work while target repositories retain execution and credentials.",
+      "components": [
+        {"name": "calendar-runtime", "paths": ["src/**"]},
+        {"name": "calendar-tests", "paths": ["test/**"]}
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": ["Introduce the schedule contract and dueOccurrences API"],
+      "dataChanges": [],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Remove the standalone runtime; no target workload has yet transferred execution ownership."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {"criterion": "AC-01", "commands": ["node --test"], "evidence": "Contract validation tests"},
+      {"criterion": "AC-02", "commands": ["node --test"], "evidence": "Cron, timezone and interval due-slot tests"},
+      {"criterion": "AC-03", "commands": ["node --test"], "evidence": "Stable occurrence-key tests"},
+      {"criterion": "AC-04", "commands": ["node --test", "./project/governance-check.sh"], "evidence": "Negative contract tests and governance gate"}
+    ]
+  }
+}
