@@ -1,0 +1,81 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-008",
+  "summary": "Fleet calendar view: transparent upcoming work inventory",
+  "workstream": "application",
+  "classification": {
+    "kind": "SERVICE",
+    "priority": "P2",
+    "origin": "health"
+  },
+  "allowedPaths": [
+    "src/fleet-catalog.mjs",
+    "test/fleet-catalog.test.mjs",
+    "project/ticket-008/**",
+    "TODO.md",
+    "project/TICKETS.md"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md"
+  ],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "58bec82c3db4b0f8acd26d62909abf8bbe54c327",
+    "targetBranch": "main",
+    "outcome": "One read-only fleet catalog answers what runs next, detects duplicate clocks and declares where run artifacts land.",
+    "nonGoals": [
+      "Moving clock ownership from systemd, Control or the supervisor",
+      "Dispatching or executing any fleet process"
+    ],
+    "complexity": "XS",
+    "estimatedMinutes": 10,
+    "budgets": {
+      "maxImplementationFiles": 2,
+      "maxAffectedComponents": 1,
+      "maxPublicInterfaceChanges": 0,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Calendar declares the fleet inventory read-only; clocks stay with their current owners per the migration boundary.",
+      "components": [
+        {
+          "name": "fleet-calendar-view",
+          "paths": [
+            "src/fleet-catalog.mjs",
+            "test/fleet-catalog.test.mjs"
+          ]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [],
+      "dataChanges": [],
+      "ui": {
+        "impact": "none",
+        "states": [],
+        "evidence": []
+      },
+      "rollback": "Remove src/fleet-catalog.mjs and its test."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-01",
+        "commands": [
+          "node --test test/fleet-catalog.test.mjs"
+        ],
+        "evidence": "Six fleet-catalog tests pass, including duplicate-clock detection."
+      },
+      {
+        "criterion": "AC-02",
+        "commands": [
+          "node --test test/calendar.test.mjs"
+        ],
+        "evidence": "Existing calendar contract tests still pass."
+      }
+    ]
+  }
+}
