@@ -1,5 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+// Ticket-008 delivery contract: two implementation files (catalog + this
+// test), XS complexity, no public-interface or runtime-dependency changes.
 import { fleetSchedules, fleetScheduleDuplicates, upcomingFleetOccurrences } from "../src/fleet-catalog.mjs";
 import { validateSchedule } from "../src/calendar.mjs";
 

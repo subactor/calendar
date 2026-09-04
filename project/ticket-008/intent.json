@@ -31,11 +31,11 @@
       "Dispatching or executing any fleet process"
     ],
     "complexity": "XS",
-    "estimatedMinutes": 30,
+    "estimatedMinutes": 10,
     "budgets": {
-      "maxImplementationFiles": 3,
+      "maxImplementationFiles": 2,
       "maxAffectedComponents": 1,
-      "maxPublicInterfaceChanges": 1,
+      "maxPublicInterfaceChanges": 0,
       "maxRuntimeDependencies": 0
     },
     "architecture": {
