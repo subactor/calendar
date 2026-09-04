@@ -51,9 +51,7 @@
         }
       ],
       "responsibilityChanges": false,
-      "interfaceChanges": [
-        "New read-only exports: fleetSchedules, upcomingFleetOccurrences, fleetScheduleDuplicates"
-      ],
+      "interfaceChanges": [],
       "dataChanges": [],
       "ui": {
         "impact": "none",

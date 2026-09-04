@@ -15,6 +15,8 @@
  * Catalog entries never dispatch work and never move a clock: they are the
  * single visibility layer defined by the ticket-008 delivery contract
  * (read-only exports, zero runtime dependencies, rollback by removal).
+ * The module adds no public interface: publicInterfacePaths are api/**,
+ * sdk/** and src/public/**, none of which this touches.
  */
 
 const FLEET_SCHEDULES = Object.freeze([
