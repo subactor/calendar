@@ -15,11 +15,6 @@
   "coordination": {
     "integration": {
       "requiredForPaths": [
-        "package.json",
-        "pyproject.toml",
-        "go.mod",
-        "Cargo.toml",
-        "pom.xml",
         "operations/**",
         "events/**",
         "error/**",
@@ -28,7 +23,7 @@
       ],
       "workstream": "integration"
     },
-    "maxActiveTicketsPerWorkstream": 1,
+    "maxActiveTicketsPerWorkstream": 3,
     "mode": "workstreams",
     "rejectActiveScopeOverlap": true,
     "workstreams": {
@@ -54,7 +49,25 @@
           "project.sh",
           "project.bat",
           "project/**",
-          "scripts/runtime.sh"
+          "scripts/runtime.sh",
+          ".subactor/**",
+          "CLAUDE.md",
+          "GEMINI.md",
+          "pyproject.toml",
+          "package.json",
+          "worktree-guard.yaml",
+          "wellmanifest_governance.py",
+          "scripts/**",
+          ".cursor/**",
+          ".gitattributes",
+          ".gitignore",
+          ".aider.conf.yml",
+          ".githooks/**",
+          ".github/**",
+          "project/new-ticket.sh",
+          "project/governance-check.*",
+          "project/TICKETS.md",
+          "project/ticket-*/**"
         ]
       },
       "infrastructure": {
@@ -98,15 +111,22 @@
       "M",
       "L"
     ],
-    "checkpointMinutes": 25,
+    "checkpointMinutes": 30,
     "dependencyManifestPaths": [
       "package.json",
       "pyproject.toml",
       "go.mod",
       "Cargo.toml",
-      "pom.xml"
+      "pom.xml",
+      "package-lock.json",
+      "pnpm-lock.yaml",
+      "yarn.lock",
+      "uv.lock",
+      "poetry.lock",
+      "go.sum",
+      "Cargo.lock"
     ],
-    "maxActiveMinutes": 30,
+    "maxActiveMinutes": 120,
     "maxAffectedComponents": 5,
     "maxImplementationFiles": 15,
     "maxPublicInterfaceChanges": 3,
@@ -189,7 +209,7 @@
   "stacks": [],
   "standard": {
     "id": "wellmanifest/new-project",
-    "version": "0.19.7"
+    "version": "0.20.35"
   },
   "ticket": {
     "activeStatuses": [
@@ -199,7 +219,7 @@
       "DONE",
       "CANCELLED"
     ],
-    "directoryPattern": "^ticket-[0-9]{3}$",
+    "directoryPattern": "^ticket-[0-9]{3,}$",
     "implementationStates": [
       "EDIT",
       "VALIDATION",
