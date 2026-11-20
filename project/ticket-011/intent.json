@@ -20,5 +20,53 @@
   "stacks": [],
   "dependsOn": [],
   "conflictsWith": [],
-  "integrationTicket": null
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "9dd58c8eedd8a33d947b37a7698fed3c77dd4ec2",
+    "targetBranch": "main",
+    "outcome": "Fetch full Git history and pass explicit PR/branch base-head range in windows-governance and test CI jobs in .github/workflows/ci.yml so already-merged tickets on main do not trigger false GOV-SYNC-001 or GOV-WORKSTREAM-004 failures.",
+    "complexity": "XS",
+    "estimatedMinutes": 10,
+    "budgets": {
+      "maxImplementationFiles": 1,
+      "maxAffectedComponents": 1,
+      "maxPublicInterfaceChanges": 0,
+      "maxRuntimeDependencies": 0
+    },
+    "runtimeDependencies": [],
+    "nonGoals": [
+      "Modifying product runtime code, managed governance files, or active ticket-010 adoption files."
+    ],
+    "architecture": {
+      "status": "accepted",
+      "decision": "Update .github/workflows/ci.yml to pass fetch-depth: 0, exact ref checkout, and explicit --base/--head arguments on pull_request and non-main branch push events in both test and windows-governance jobs.",
+      "components": [
+        {
+          "name": "ci-workflow",
+          "paths": [
+            ".github/workflows/ci.yml"
+          ]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [],
+      "dataChanges": [],
+      "ui": {
+        "impact": "none",
+        "states": [],
+        "evidence": []
+      },
+      "rollback": "Revert ticket-011 PR via independent Validator to restore prior .github/workflows/ci.yml."
+    },
+    "validation": [
+      {
+        "criterion": "AC-01",
+        "commands": [
+          "node --test",
+          "./project/governance-check.sh --base origin/main --head HEAD"
+        ],
+        "evidence": "All 15 Node tests pass and governance-check.sh passes with GOV-PASS (0 errors, 0 warnings)."
+      }
+    ]
+  }
 }

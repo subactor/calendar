@@ -26,8 +26,11 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: ./project/governance-check.sh --base "$BASE_SHA" --head "$HEAD_SHA"
+      - name: Validate governance (branch push)
+        if: github.event_name != 'pull_request' && github.ref != 'refs/heads/main'
+        run: ./project/governance-check.sh --base origin/main --head HEAD
       - name: Validate governance
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: ./project/governance-check.sh
 
   windows-governance:
@@ -50,7 +53,11 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: project\governance-check.bat --base "%BASE_SHA%" --head "%HEAD_SHA%"
+      - name: Validate governance entrypoints (branch push)
+        if: github.event_name != 'pull_request' && github.ref != 'refs/heads/main'
+        shell: cmd
+        run: project\governance-check.bat --base origin/main --head HEAD
       - name: Validate governance entrypoints
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         shell: cmd
         run: project\governance-check.bat
