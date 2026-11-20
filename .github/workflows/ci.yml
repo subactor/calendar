@@ -20,7 +20,17 @@ jobs:
         run: if [ -d test ]; then node --test; else echo "Runtime tests arrive in the application slice"; fi
       - name: Activate managed hooks
         run: git config core.hooksPath .githooks
+      - name: Validate governance (PR range)
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: ./project/governance-check.sh --base "$BASE_SHA" --head "$HEAD_SHA"
+      - name: Validate governance (branch push)
+        if: github.event_name != 'pull_request' && github.ref != 'refs/heads/main'
+        run: ./project/governance-check.sh --base origin/main --head HEAD
       - name: Validate governance
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: ./project/governance-check.sh
 
   windows-governance:
@@ -30,9 +40,24 @@ jobs:
         shell: cmd
         run: git config --global core.autocrlf false
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Activate managed hooks
         shell: cmd
         run: git config core.hooksPath .githooks
+      - name: Validate governance entrypoints (PR range)
+        if: github.event_name == 'pull_request'
+        shell: cmd
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: project\governance-check.bat --base "%BASE_SHA%" --head "%HEAD_SHA%"
+      - name: Validate governance entrypoints (branch push)
+        if: github.event_name != 'pull_request' && github.ref != 'refs/heads/main'
+        shell: cmd
+        run: project\governance-check.bat --base origin/main --head HEAD
       - name: Validate governance entrypoints
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         shell: cmd
         run: project\governance-check.bat
